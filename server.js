@@ -22,10 +22,11 @@ app.use('/', CategoriesRouter);
 // Use process.env to access environment variables
 const mongoUserName = process.env.MONGO_USER_NAME;
 const mongoPassword = process.env.MONGO_PASSWORD;
+const mongoUrl = process.env.MONGO_CONNECT_URL;
 
 mongoose
     .connect(
-        `mongodb+srv://${mongoUserName}:${mongoPassword}@icebreak.1bwfasv.mongodb.net/IceBreak?retryWrites=true&w=majority`,
+        `mongodb+srv://${mongoUserName}:${mongoPassword}@${mongoUrl}/IceBreak?retryWrites=true&w=majority`,
     )
     .then(() => {
         app.listen(port, () => {
