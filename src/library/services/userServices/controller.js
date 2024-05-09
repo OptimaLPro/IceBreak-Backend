@@ -17,13 +17,19 @@ export const getAllUsers =
     }
   });
 
-export const createUser = async (req, res) => {
-  const userData = req.body;
-  try {
-    const newUser = new Users(userData);
-    const savedUser = await newUser.save({ validateBeforeSave: false });
-    res.status(201).json(savedUser);
-  } catch (error) {
-    res.status(400).json({ error: `Error creating user: ${error.message}` });
-  }
-};
+  export const createUser = async (req, res) => {
+    const userData = req.body;
+    try {
+      const newUser = new Users(userData);
+      const savedUser = await newUser.save();
+      res.status(201).json(savedUser);
+    } catch (error) {
+      if (error.code === 11000 && error.keyValue.email !== undefined) {
+        // If the error is due to a duplicate email
+        res.status(400).json({ error: "Email already exists" });
+      } else {
+        // For other errors
+        res.status(400).json({ error: `Error creating user: ${error.message}` });
+      }
+    }
+  };

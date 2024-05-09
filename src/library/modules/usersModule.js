@@ -7,13 +7,18 @@ const usersSchema = new mongoose.Schema({
     unique: true,
     trim: true,
     lowercase: true,
-
+    validate: {
+      validator: function (v) {
+        // Regular expression for validating email format
+        return /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid email address!`,
+    },
   },
   password: {
     type: String,
     required: true,
     minlength: 8, // Minimum length of the password
-
   },
   avatar: {
     type: String,
