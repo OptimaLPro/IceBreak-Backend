@@ -1,36 +1,46 @@
 import Users from "../../modules/usersModule.js";
+import bcrypt from "bcrypt";
 
-export const getAllUsers =  async (req, res) => {
-    try {
-      console.log("inside");
-      const users = await Users.find();
-      if (!users) {
-        return res.status(404).json({ error: "No users found" });
-      }
-      res.json(users);
-      console.log(users);
-    } catch (error) {
-      console.log("error fetching users:", error);
-      res.status(500).send(error.message);
+export const getAllUsers = async (req, res) => {
+  try {
+    console.log("inside");
+    const users = await Users.find();
+    if (!users) {
+      return res.status(404).json({ error: "No users found" });
     }
-  };
+    res.json(users);
+    console.log(users);
+  } catch (error) {
+    console.log("error fetching users:", error);
+    res.status(500).send(error.message);
+  }
+};
 
 export const createUser = async (req, res) => {
-  const userData = req.body;
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  console.log(hashedPassword);
+  const userData = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    password: hashedPassword,
+    avatar: req.body.avatar,
+    history: req.body.history,
+    favorites: req.body.favorites
+  };
   try {
     const newUser = new Users(userData);
     const savedUser = await newUser.save();
     res.status(201).json(savedUser);
   } catch (error) {
     if (error.code === 11000 && error.keyValue.email !== undefined) {
-      // If the error is due to a duplicate email
       res.status(400).json({ error: "Email already exists" });
     } else {
-      // For other errors
       res.status(400).json({ error: `Error creating user: ${error.message}` });
     }
   }
 };
+
 
 export const getUserById = async (req, res) => {
   const { id } = req.params;
@@ -80,6 +90,23 @@ export const updateUserById = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
     res.json(user);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+
+export const loginUser = async (req, res) => {
+  try {
+    const user = await Users.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    if (await bcrypt.compare(req.body.password, user.password)) {
+      res.json({ message: "Login successful" });
+    } else {
+      res.status(401).json({ error: "Incorrect password" });
+    }
   } catch (error) {
     res.status(500).send(error.message);
   }

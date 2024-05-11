@@ -9,6 +9,7 @@ UsersRouter.get("/userByEmail/:email", Controller.getUserByEmail);
 
 
 UsersRouter.post("/users", Controller.createUser);
+UsersRouter.post("/users/login", Controller.loginUser);
 
 UsersRouter.put("/users/:id", Controller.updateUserById);
 
