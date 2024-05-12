@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/", GamesRouter);
+app.use("/games", GamesRouter);
 app.use("/", CategoriesRouter);
 app.use("/", UsersRouter);
 // Start server
