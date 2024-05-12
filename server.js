@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/games", GamesRouter);
-app.use("/", CategoriesRouter);
+app.use("/categories", CategoriesRouter);
 app.use("/", UsersRouter);
 // Start server
 
