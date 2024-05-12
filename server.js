@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/games", GamesRouter);
 app.use("/categories", CategoriesRouter);
-app.use("/", UsersRouter);
+app.use("/users", UsersRouter);
 // Start server
 
 mongoose

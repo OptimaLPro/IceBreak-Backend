@@ -3,13 +3,11 @@ import bcrypt from "bcrypt";
 
 export const getAllUsers = async (req, res) => {
   try {
-    console.log("inside");
     const users = await Users.find();
     if (!users) {
       return res.status(404).json({ error: "No users found" });
     }
     res.json(users);
-    console.log(users);
   } catch (error) {
     console.log("error fetching users:", error);
     res.status(500).send(error.message);
@@ -18,7 +16,6 @@ export const getAllUsers = async (req, res) => {
 
 export const createUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  console.log(hashedPassword);
   const userData = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -129,14 +126,10 @@ export const addFavorite = async (req, res) => {
 }
 
 export const changePassword = async (req, res) => {
-  console.log("inside change password");
   const { id } = req.params;
-  console.log(req.params);
-  console.log(id);
   const { password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   try {
-    console.log("before find by id");
     const user = await Users.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
