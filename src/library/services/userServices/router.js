@@ -12,6 +12,10 @@ UsersRouter.post("/users", Controller.createUser);
 UsersRouter.post("/users/login", Controller.loginUser);
 
 UsersRouter.put("/users/:id", Controller.updateUserById);
+UsersRouter.put("/users/password/:id",Controller.changePassword)
+//----------------NICE TO HAVE----------------------------
+UsersRouter.put("/users/:id/favorites", Controller.addFavorite);
+
 
 UsersRouter.delete("/users/:id", Controller.deleteUserById);
 

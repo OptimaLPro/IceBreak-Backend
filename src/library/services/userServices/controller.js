@@ -111,3 +111,38 @@ export const loginUser = async (req, res) => {
     res.status(500).send(error.message);
   }
 }
+
+export const addFavorite = async (req, res) => {
+  const { id } = req.params;
+  const { favorite } = req.body;
+  try {
+    const user = await Users.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    user.favorites.push(favorite);
+    await user.save();
+    res.json(user);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+export const changePassword = async (req, res) => {
+  console.log("inside change password");
+  const { id } = req.params;
+  console.log(req.params);
+  console.log(id);
+  const { password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  try {
+    console.log("before find by id");
+    const user = await Users.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
