@@ -12,11 +12,12 @@ export const socketSettings = () => {
 
         // Handle room creation
         socket.on('createRoom', (roomData) => {
-            const { roomId, playerName } = roomData;
+            console.log('Room data:', roomData);
+            const { gamePIN } = roomData;
             // Create a new room with the given roomId and playerName
-            socket.join(roomId);
+            socket.join(gamePIN);
             // Emit an event to confirm room creation
-            socket.emit('roomCreated', roomId);
+            socket.emit('roomCreated', gamePIN);
         });
 
         // Handle joining a room
