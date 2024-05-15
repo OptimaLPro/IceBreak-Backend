@@ -6,6 +6,7 @@ const UsersRouter = express.Router();
 UsersRouter.get("/allUsers", Controller.getAllUsers);
 UsersRouter.get("/userById/:id", Controller.getUserById);
 UsersRouter.get("/userByEmail/:email", Controller.getUserByEmail);
+UsersRouter.get("/checkAuth", Controller.getUserByToken);
 
 
 UsersRouter.post("/createUser", Controller.createUser);

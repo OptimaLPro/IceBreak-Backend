@@ -1,5 +1,10 @@
 import Users from "../../modules/usersModule.js";
 import bcrypt from "bcrypt";
+import env from "dotenv";
+import { configDotenv } from "dotenv";
+import jsonwebtoken from "jsonwebtoken";
+env.config();
+
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -100,7 +105,10 @@ export const loginUser = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
     if (await bcrypt.compare(req.body.password, user.password)) {
-      res.json({ message: "Login successful" });
+    console.log("Access Token Secret:", process.env.ACCESS_TOKEN_SECRET);
+     const accessToken= jsonwebtoken.sign({ user }, process.env.ACCESS_TOKEN_SECRET); 
+     console.log(accessToken);
+      res.json({ message: "Login successful", accessToken: accessToken});
     } else {
       res.status(401).json({ error: "Incorrect password" });
     }
@@ -108,6 +116,36 @@ export const loginUser = async (req, res) => {
     res.status(500).send(error.message);
   }
 }
+
+export const getUserByToken = async (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token === null) {
+    return res.sendStatus(401);
+  }
+  jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+    res.json(user);
+  });
+};
+
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token === null) {
+    return res.sendStatus(401);
+  }
+  const decoded = jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+    req.user = decoded.user;
+    next();
+  });
+}
+
 
 export const addFavorite = async (req, res) => {
   const { id } = req.params;

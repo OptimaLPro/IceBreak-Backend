@@ -23,9 +23,12 @@ app.use("/categories", CategoriesRouter);
 app.use("/users", UsersRouter);
 // Start server
 
+const mongoUserName = process.env.MONGO_USER_NAME;
+const mongoPassword = process.env.MONGO_PASSWORD;
+const mongoUrl = process.env.MONGO_CONNECT_URL;
 mongoose
   .connect(
-    `mongodb+srv://oa8993:eG99qGFO6USiXP7N@icebreak.qyuoeac.mongodb.net/IceBreak?retryWrites=true&w=majority&appName=IceBreak`
+   `mongodb+srv://${mongoUserName}:${mongoPassword}@${mongoUrl}/IceBreak?retryWrites=true&w=majority`
   )
   .then(() => {
     app.listen(port, () => {
