@@ -9,6 +9,7 @@ import http from "http";
 import bodyParser from "body-parser";
 import { Server } from "socket.io";
 import GamesLogRouter from "./src/library/services/gamesLogServices/Router.js";
+import TriviaRouter from "./src/library/services/triviaServices/Router.js";
 dotenv.config();
 
 const port = 8080;
@@ -35,6 +36,7 @@ app.get("/", (req, res) => {
 
 app.use('/', GamesRouter);
 app.use('/', CategoriesRouter);
+app.use('/trivia', TriviaRouter);
 app.use('/', GamesLogRouter);
 
 const rooms = {};
@@ -123,7 +125,7 @@ const mongoUrl = process.env.MONGO_CONNECT_URL;
 
 mongoose
     .connect(
-        `mongodb+srv://${mongoUserName}:${mongoPassword}@${mongoUrl}/IceBreak?retryWrites=true&w=majority`,
+       `mongodb+srv://${mongoUserName}:${mongoPassword}@${mongoUrl}/IceBreak?retryWrites=true&w=majority`,
     )
     .then(() => {
         app.listen(port, () => {
