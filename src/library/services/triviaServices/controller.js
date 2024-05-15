@@ -6,28 +6,26 @@ export const getAllTrivia = async (req, res) => {
         const trivia = await Trivia.find();
         console.log(trivia);
         if (!trivia) {
-            return res.status(404).json({ error: "No trivia found" });
+            throw new Error('No trivia found');
         }
         res.json(trivia);
         console.log(trivia);
     } catch (error) {
-        console.log("Error fetching trivia:", error);
-        res.status(500).json({ error: "Error fetching trivia" });
+        res.status(500).json(error.message);
     }
 };
 
 
-export const getTriviaByTagg = async (req, res) => {
+export const getTriviaByTag = async (req, res) => {
     const { tag } = req.params; 
     try {
         const trivia = await Trivia.find({ tags: { $in: [tag] } });
         if (!trivia) {
-            return res.status(404).json({ error: "No trivia found for the selected tag" });
+            res.status(404).json(error.message);
         }
         res.json(trivia);
     } catch (error) {
-        console.error("Error fetching trivia by tag:", error);
-        res.status(500).json({ error: "Error fetching trivia by tag" });
+        res.status(500).json(error.message);
     }
 };
 

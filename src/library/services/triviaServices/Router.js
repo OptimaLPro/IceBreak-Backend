@@ -4,6 +4,6 @@ import express from 'express';
 const TriviaRouter = express.Router();
 
 TriviaRouter.get('/allTrivia', Controller.getAllTrivia);
-TriviaRouter.get('/triviaByTag/:tag', Controller.getTriviaByTagg);
+TriviaRouter.get('/triviaByTag/:tag', Controller.getTriviaByTag);
 
 export default TriviaRouter;
