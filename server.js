@@ -42,12 +42,9 @@ const rooms = {};
 io.on('connection', (socket) => {
     console.log('A user connected ' + socket.id);
 
-    // Handle room creation
     socket.on('createRoom', (roomData) => {
         const { gamePIN } = roomData;
-        // Create a new room with the given roomId and playerName
         socket.join(gamePIN);
-        // Emit an event to confirm room creation
         socket.emit('roomCreated', gamePIN);
         rooms[gamePIN] = {
             owner: socket.id,
@@ -68,21 +65,16 @@ io.on('connection', (socket) => {
 
     socket.on('getPlayers', ({ gamePIN }) => {
         if (rooms[gamePIN]) {
-            // Send players data to the client
             socket.emit('playersData', { players: rooms[gamePIN].players });
         }
     });
 
-    // Handle joining a room
     socket.on('joinRoom', (roomData) => {
         const { gamePIN, name, avatar } = roomData;
-        // Add the player to the room
         rooms[gamePIN].players.push({ id: socket.id, name, avatar });
 
-        // Emit event to inform all clients in the room that a new player has joined
         io.to(gamePIN).emit('playerJoined', { id: socket.id, name, avatar });
 
-        // Update the count of connected people in the waiting room
         const connectedPeopleCount = io.sockets.adapter.rooms.get(gamePIN)?.size || 0;
         io.to(gamePIN).emit('connectedPeopleCount', connectedPeopleCount);
 
