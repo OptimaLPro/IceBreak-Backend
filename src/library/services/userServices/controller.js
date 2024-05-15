@@ -102,7 +102,7 @@ export const loginUser = async (req, res) => {
   try {
     const user = await Users.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      throw new Error("User not found" );
     }
     if (await bcrypt.compare(req.body.password, user.password)) {
     console.log("Access Token Secret:", process.env.ACCESS_TOKEN_SECRET);
@@ -110,7 +110,7 @@ export const loginUser = async (req, res) => {
      console.log(accessToken);
       res.json({ message: "Login successful", accessToken: accessToken});
     } else {
-      res.status(401).json({ error: "Incorrect password" });
+      throw new Error("Incorrect password");
     }
   } catch (error) {
     res.status(500).send(error.message);
@@ -131,20 +131,20 @@ export const getUserByToken = async (req, res) => {
   });
 };
 
-const authenticateToken = (req, res, next) => {
+export const auth = (req, res, next) => {
+try{
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (token === null) {
     return res.sendStatus(401);
   }
-  const decoded = jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      return res.sendStatus(403);
-    }
+  const decoded = jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET);
     req.user = decoded.user;
     next();
-  });
+} catch (error) {
+  res.status(500).send(error.message);
 }
+};
 
 
 export const addFavorite = async (req, res) => {
