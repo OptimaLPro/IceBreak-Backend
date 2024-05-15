@@ -5,6 +5,7 @@ import Game from "./src/library/modules/gamesModule.js";
 import dotenv from "dotenv";
 import GamesRouter from './src/library/services/gameServices/Router.js';
 import CategoriesRouter from './src/library/services/categoriesServices/Router.js';
+import TriviaRouter from "./src/library/services/triviaServices/Router.js";
 dotenv.config();
 
 
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 
 app.use('/', GamesRouter);
 app.use('/', CategoriesRouter);
+app.use('/trivia', TriviaRouter);
 
 // Use process.env to access environment variables
 const mongoUserName = process.env.MONGO_USER_NAME;
@@ -26,7 +28,8 @@ const mongoUrl = process.env.MONGO_CONNECT_URL;
 
 mongoose
     .connect(
-        `mongodb+srv://${mongoUserName}:${mongoPassword}@${mongoUrl}/IceBreak?retryWrites=true&w=majority`,
+       // `mongodb+srv://IceBreak:Zg1KMYTAcnpXVqD0@icebreak.1bwfasv.mongodb.net/IceBreak?retryWrites=true&w=majority`,
+       `mongodb+srv://${mongoUserName}:${mongoPassword}@${mongoUrl}/IceBreak?retryWrites=true&w=majority`,
     )
     .then(() => {
         app.listen(port, () => {
