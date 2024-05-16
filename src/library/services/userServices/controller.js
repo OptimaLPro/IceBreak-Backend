@@ -23,7 +23,7 @@ export const createUser = async (req, res) => {
     password: hashedPassword,
     avatar: req.body.avatar,
     history: req.body.history,
-    favorites: req.body.favorites
+    favorites: req.body.favorites,
   };
   try {
     const newUser = new Users(userData);
@@ -37,7 +37,6 @@ export const createUser = async (req, res) => {
     }
   }
 };
-
 
 export const getUserById = async (req, res) => {
   const { id } = req.params;
@@ -76,7 +75,7 @@ export const deleteUserById = async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
-}
+};
 
 export const updateUserById = async (req, res) => {
   const { id } = req.params;
@@ -90,24 +89,52 @@ export const updateUserById = async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
-}
-
+};
 
 export const loginUser = async (req, res) => {
   try {
     const user = await Users.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      throw new Error("User not found");
     }
     if (await bcrypt.compare(req.body.password, user.password)) {
       res.json({ message: "Login successful" });
     } else {
-      res.status(401).json({ error: "Incorrect password" });
+      throw new Error("Incorrect password");
     }
   } catch (error) {
     res.status(500).send(error.message);
   }
-}
+};
+
+export const getUserByToken = async (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token === null) {
+    return res.sendStatus(401);
+  }
+  jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+    res.json(user);
+  });
+};
+
+export const auth = (req, res, next) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    if (token === null) {
+      return res.sendStatus(401);
+    }
+    const decoded = jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    req.user = decoded.user;
+    next();
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
 
 export const addFavorite = async (req, res) => {
   const { id } = req.params;
@@ -123,14 +150,18 @@ export const addFavorite = async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
-}
+};
 
 export const changePassword = async (req, res) => {
   const { id } = req.params;
   const { password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   try {
-    const user = await Users.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
+    const user = await Users.findByIdAndUpdate(
+      id,
+      { password: hashedPassword },
+      { new: true }
+    );
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -138,4 +169,4 @@ export const changePassword = async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
-}
+};
