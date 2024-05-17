@@ -17,7 +17,6 @@ UsersRouter.put("/password/:id",Controller.changePassword)
 //----------------NICE TO HAVE----------------------------
 UsersRouter.put("/users/:id/favorites", Controller.addFavorite);
 
-
 UsersRouter.delete("/users/:id", Controller.deleteUserById);
 
 export default UsersRouter;

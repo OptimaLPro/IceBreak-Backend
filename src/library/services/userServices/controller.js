@@ -1,10 +1,5 @@
 import Users from "../../modules/usersModule.js";
 import bcrypt from "bcrypt";
-import env from "dotenv";
-import { configDotenv } from "dotenv";
-import jsonwebtoken from "jsonwebtoken";
-env.config();
-
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -28,7 +23,7 @@ export const createUser = async (req, res) => {
     password: hashedPassword,
     avatar: req.body.avatar,
     history: req.body.history,
-    favorites: req.body.favorites
+    favorites: req.body.favorites,
   };
   try {
     const newUser = new Users(userData);
@@ -42,7 +37,6 @@ export const createUser = async (req, res) => {
     }
   }
 };
-
 
 export const getUserById = async (req, res) => {
   const { id } = req.params;
@@ -81,7 +75,7 @@ export const deleteUserById = async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
-}
+};
 
 export const updateUserById = async (req, res) => {
   const { id } = req.params;
@@ -95,8 +89,7 @@ export const updateUserById = async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
-}
-
+};
 
 export const loginUser = async (req, res) => {
   try {
@@ -105,16 +98,17 @@ export const loginUser = async (req, res) => {
       throw new Error("User not found");
     }
     if (await bcrypt.compare(req.body.password, user.password)) {
-      console.log("Access Token Secret:", process.env.ACCESS_TOKEN_SECRET);
-      const accessToken = jsonwebtoken.sign({ user }, process.env.ACCESS_TOKEN_SECRET);
-      res.json({ message: "Login successful", accessToken: accessToken });
+    console.log("Access Token Secret:", process.env.ACCESS_TOKEN_SECRET);
+     const accessToken= jsonwebtoken.sign({ user }, process.env.ACCESS_TOKEN_SECRET); 
+     console.log(accessToken);
+      res.json({ message: "Login successful", accessToken: accessToken});
     } else {
       throw new Error("Incorrect password");
     }
   } catch (error) {
     res.status(500).send(error.message);
   }
-}
+};
 
 export const getUserByToken = async (req, res) => {
   const authHeader = req.headers["authorization"];
@@ -145,7 +139,6 @@ export const auth = (req, res, next) => {
   }
 };
 
-
 export const addFavorite = async (req, res) => {
   const { id } = req.params;
   const { favorite } = req.body;
@@ -160,14 +153,18 @@ export const addFavorite = async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
-}
+};
 
 export const changePassword = async (req, res) => {
   const { id } = req.params;
   const { password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   try {
-    const user = await Users.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
+    const user = await Users.findByIdAndUpdate(
+      id,
+      { password: hashedPassword },
+      { new: true }
+    );
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -175,4 +172,4 @@ export const changePassword = async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
-}
+};
