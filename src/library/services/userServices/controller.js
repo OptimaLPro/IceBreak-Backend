@@ -1,5 +1,6 @@
 import Users from '../../modules/usersModule.js'
 import bcrypt from 'bcrypt'
+import jsonwebtoken from 'jsonwebtoken'
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -98,11 +99,7 @@ export const loginUser = async (req, res) => {
       throw new Error('User not found')
     }
     if (await bcrypt.compare(req.body.password, user.password)) {
-      console.log('Access Token Secret:', process.env.ACCESS_TOKEN_SECRET)
-      const accessToken = jsonwebtoken.sign(
-        { user },
-        process.env.ACCESS_TOKEN_SECRET
-      )
+      const accessToken = jsonwebtoken.sign({user},process.env.ACCESS_TOKEN_SECRET)
       console.log(accessToken)
       res.json({ message: 'Login successful', accessToken: accessToken })
     } else {
