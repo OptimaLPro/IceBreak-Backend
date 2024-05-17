@@ -102,13 +102,12 @@ export const loginUser = async (req, res) => {
   try {
     const user = await Users.findOne({ email: req.body.email });
     if (!user) {
-      throw new Error("User not found" );
+      throw new Error("User not found");
     }
     if (await bcrypt.compare(req.body.password, user.password)) {
-    console.log("Access Token Secret:", process.env.ACCESS_TOKEN_SECRET);
-     const accessToken= jsonwebtoken.sign({ user }, process.env.ACCESS_TOKEN_SECRET); 
-     console.log(accessToken);
-      res.json({ message: "Login successful", accessToken: accessToken});
+      console.log("Access Token Secret:", process.env.ACCESS_TOKEN_SECRET);
+      const accessToken = jsonwebtoken.sign({ user }, process.env.ACCESS_TOKEN_SECRET);
+      res.json({ message: "Login successful", accessToken: accessToken });
     } else {
       throw new Error("Incorrect password");
     }
@@ -132,18 +131,18 @@ export const getUserByToken = async (req, res) => {
 };
 
 export const auth = (req, res, next) => {
-try{
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (token === null) {
-    return res.sendStatus(401);
-  }
-  const decoded = jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    if (token === null) {
+      return res.sendStatus(401);
+    }
+    const decoded = jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET);
     req.user = decoded.user;
     next();
-} catch (error) {
-  res.status(500).send(error.message);
-}
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 };
 
 
