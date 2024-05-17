@@ -36,10 +36,11 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.use('/', GamesRouter);
-app.use('/', CategoriesRouter);
+app.use("/games", GamesRouter);
+app.use("/categories", CategoriesRouter);
+app.use("/users", UsersRouter);
 app.use('/trivia', TriviaRouter);
-app.use('/', GamesLogRouter);
+
 
 const rooms = {};
 
@@ -120,9 +121,7 @@ io.on('connection', (socket) => {
 
 
 
-app.use("/games", GamesRouter);
-app.use("/categories", CategoriesRouter);
-app.use("/users", UsersRouter);
+
 // Start server
 
 mongoose
