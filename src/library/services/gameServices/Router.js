@@ -3,7 +3,7 @@ import express from 'express';
 
 const GamesRouter = express.Router();
 
-GamesRouter.get('/games', Controller.getAllGames);
+GamesRouter.get('/allGames', Controller.getAllGames);
 // GamesRouter.get('/games/:id', Controller.getGameById);
 
 // GamesRouter.post('/games', Controller.updateGame);
