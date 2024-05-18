@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 // Define the schema for the games collection
 const gameSchema = new mongoose.Schema({
   name: String,
+  active: Boolean,
   title: String,
   tags: [String],
   trailer: String,
