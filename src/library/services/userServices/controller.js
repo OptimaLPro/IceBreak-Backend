@@ -34,7 +34,7 @@ export const createUser = async (req, res) => {
     if (error.code === 11000 && error.keyValue.email !== undefined) {
       res.status(400).json({ error: 'Email already exists' })
     } else {
-      res.status(400).json({ error: `Error creating user: ${error.message}` })
+      res.status(401).json({ error: `Error creating user: ${error.message}` })
     }
   }
 }
@@ -99,7 +99,10 @@ export const loginUser = async (req, res) => {
       throw new Error('User not found')
     }
     if (await bcrypt.compare(req.body.password, user.password)) {
-      const accessToken = jsonwebtoken.sign({user},process.env.ACCESS_TOKEN_SECRET)
+      const accessToken = jsonwebtoken.sign(
+        { user },
+        process.env.ACCESS_TOKEN_SECRET
+      )
       console.log(accessToken)
       res.json({ message: 'Login successful', accessToken: accessToken })
     } else {
